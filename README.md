@@ -6,4 +6,4 @@ We propose a model-agnostic training paradigm, Biomarker-driven Explainable Prio
 
 ## Overview
 
-C
+![Figure 1. Overall pipeline](figures/pipeline.png)
