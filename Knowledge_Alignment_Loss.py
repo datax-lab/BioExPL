@@ -12,8 +12,12 @@ def pairwise_euclidean(x, eps=1e-8):
     # normalize for scale invariance
     return D / (D.max() + eps)
 
+def pairwise_cosine_sim(x):
+    x_norm = torch.nn.functional.normalize(x, p=2, dim=1)
+    S = x_norm @ x_norm.T
+    return S
 
-def KAL(x_sub, h):
+def KAL(x_sub, h, metric = 'euclidean'):
     """
     Knowledge alignment loss between input space and hidden space.
 
@@ -30,12 +34,19 @@ def KAL(x_sub, h):
         scalar knowledge alignment loss
     """
     # Pairwise distances
-    D_x = pairwise_euclidean(x_sub)
-    D_h = pairwise_euclidean(h)
+    if metric == 'euclidean':
+        M_x = pairwise_euclidean(x_sub)
+        M_h = pairwise_euclidean(h)
+    # Pairwise similarity
+    elif metric == 'cosine':
+        M_x = pairwise_euclidean(x_sub)
+        M_h = pairwise_euclidean(h)
+    else:
+        print('Invalid Metric')
+        
+    B = M_x.size(0)
+    Di, Dj = torch.triu_indices(B, B, offset=1, device=M_x.device)
 
-    B = D_x.size(0)
-    Di, Dj = torch.triu_indices(B, B, offset=1, device=D_x.device)
-
-    diff_sq = (D_x[Di, Dj] - D_h[Di, Dj]) ** 2
+    diff_sq = (M_x[Di, Dj] - M_h[Di, Dj]) ** 2
     
     return diff_sq.sum()
