@@ -39,8 +39,8 @@ def KAL(x_sub, h, metric = 'euclidean'):
         M_h = pairwise_euclidean(h)
     # Pairwise similarity
     elif metric == 'cosine':
-        M_x = pairwise_euclidean(x_sub)
-        M_h = pairwise_euclidean(h)
+        M_x = pairwise_cosine_sim(x_sub)
+        M_h = pairwise_cosine_sim(h)
     else:
         print('Invalid Metric')
         
